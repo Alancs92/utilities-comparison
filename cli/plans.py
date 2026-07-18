@@ -116,14 +116,22 @@ def cmd_list(args, data):
         print(json.dumps([{**p, "calculated": c} for p, c in rows], indent=2))
         return
 
-    print(f"{'ID':32s} {'Retailer':18s} {'Plan':32s} {'Type':12s} {'/cycle':>10s} {'/yr':>10s}")
+    print(f"{'ID':32s} {'Retailer':18s} {'Plan':32s} {'Type':12s} {'/cycle':>10s} {'/yr':>10s}  {'Move fees':>18s}")
     for p, c in rows:
         marker = " *" if p.get("isCurrent") else ""
         yr = c["total"] / days * 365
+        fees = p.get("fees") or {}
+        fee_str = "—"
+        if fees:
+            parts = []
+            if "connectionFee" in fees: parts.append(f"conn ${fees['connectionFee']:.2f}")
+            if "disconnectionFee" in fees: parts.append(f"disc ${fees['disconnectionFee']:.2f}")
+            fee_str = ", ".join(parts)
         print(f"{p['id']:32s} {p['retailer']:18s} {p['planName'][:32]:32s} {p['tariffType']:12s} "
-              f"${c['total']:>8.2f} ${yr:>8.0f}{marker}")
+              f"${c['total']:>8.2f} ${yr:>8.0f}{marker}  {fee_str:>18s}")
     print(f"\n(* = current plan)  usage={usage} kWh/day  days={days}  peak-share={args.peak_share}% "
           f"(only affects time_of_use plans)")
+    print("Move fees only apply if physically relocating address, not on a same-address retailer switch.")
 
 
 def cmd_show(args, data):
@@ -185,6 +193,13 @@ def _plan_from_args(args, existing=None):
     plan.setdefault("discountPct", 0)
     plan.setdefault("stepThresholdKwhPerDay", None)
     plan.setdefault("notes", "")
+    fees = dict(plan.get("fees") or {})
+    if getattr(args, "connection_fee_cents", None) is not None:
+        fees["connectionFee"] = round(args.connection_fee_cents / 100, 2)
+    if getattr(args, "disconnection_fee_cents", None) is not None:
+        fees["disconnectionFee"] = round(args.disconnection_fee_cents / 100, 2)
+    if fees:
+        plan["fees"] = fees
     return plan
 
 
@@ -302,6 +317,8 @@ def main():
         sp.add_argument("--source")
         sp.add_argument("--source-date")
         sp.add_argument("--notes")
+        sp.add_argument("--connection-fee-cents", type=float, help="One-off move-in/new-connection fee, only relevant if physically moving address")
+        sp.add_argument("--disconnection-fee-cents", type=float, help="One-off disconnection fee, only relevant if physically moving address")
         sp.add_argument("--current", action="store_true", help="Mark this as the household's current plan")
 
     p_add = sub.add_parser("add", help="Add a new plan")

@@ -48,7 +48,7 @@ python3 cli/plans.py calc --usage 20 --days 30
 # Inspect one plan's raw data + calculated cost
 python3 cli/plans.py show globird-glosave
 
-# Add a plan you were just quoted
+# Add a plan you were just quoted (including one-off move fees, if known)
 python3 cli/plans.py add \
   --id example-retailer-plan \
   --retailer "Example Retailer" \
@@ -56,6 +56,7 @@ python3 cli/plans.py add \
   --tariff-type single_rate \
   --daily-charge-cents 100.0 \
   --rate-low-cents 30.0 \
+  --connection-fee-cents 12356 --disconnection-fee-cents 12356 \
   --source "Retailer website" --source-date 2026-07-20 \
   --notes "Any eligibility conditions or sign-up credits go here"
 
@@ -90,6 +91,7 @@ Each plan has:
 | `source`, `sourceDate` | Where the numbers came from and when, so stale data is easy to spot |
 | `notes` | Eligibility conditions, sign-up credits, caveats, anything that doesn't fit a field |
 | `isCurrent` | Marks the household's current plan |
+| `fees` | Optional. `{connectionFee, disconnectionFee}` in dollars — one-off move-in/move-out fees. **Only relevant if physically relocating address**, not on a same-address retailer switch (which is what this tool is normally used for). Excluded from cost calculations unless explicitly included (see below). |
 
 ### Tariff types
 
