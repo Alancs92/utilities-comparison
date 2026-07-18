@@ -123,10 +123,14 @@
       "rateHigh": 0.3156,
       "stepThresholdKwhPerDay": null,
       "discountPct": 0,
-      "source": "Energy Made Easy screenshot",
-      "sourceDate": "2026-07-18",
-      "notes": "1 special offer noted (unspecified). EME estimated cost ~$1,880/yr, no ongoing discount applicable.",
-      "requiresSmartMeter": false
+      "source": "Energy Made Easy (plan page)",
+      "sourceDate": "2026-07-19",
+      "notes": "Special offer: free 12-month Kogan FIRST membership for new Kogan Energy customers (sign-up perk, eligibility + conditions apply) - a perk, not a rate discount (discountPct=0). Solar feed-in +1c/kWh (not modelled here). Fees: move-in/new connection $123.56 (manual; $0 remote), disconnection $123.56 (manual; $0 remote), move-in & move-out read $17.26 each. EME est (postcode-typical, not this household): Low $1,340 / Med $2,090 / High $2,850. No ongoing discount. Meter: Basic/Smart. Provided by Powershop Australia. Plan ID KOG1060487MRE2, effective 01 Jul 2026, no exit fees.",
+      "requiresSmartMeter": false,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
     },
     {
       "id": "powershop-power-house-eme",
@@ -139,10 +143,14 @@
       "rateHigh": 0.3156,
       "stepThresholdKwhPerDay": null,
       "discountPct": 0,
-      "source": "Energy Made Easy screenshot",
-      "sourceDate": "2026-07-18",
-      "notes": "Environmental options plan. EME estimated cost $1,880/yr, no discount.",
-      "requiresSmartMeter": false
+      "source": "Energy Made Easy (plan page)",
+      "sourceDate": "2026-07-19",
+      "notes": "Optional add-on: 100% GreenPower @ 1.1c/kWh inc GST ($0.011/unit of usage) - opt-in, not included in the cost here. Solar feed-in +1c/kWh (not modelled). Fees: move-in/new connection $123.56 (manual; $0 remote), disconnection $123.56 (manual; $0 remote), move-in & move-out read $17.26 each. EME est (postcode-typical, not this household): Low $1,340 / Med $2,090 / High $2,850. No discounts available. Meter: Basic/Smart. Same underlying retailer as Kogan Energy (Powershop Australia). Plan ID PSH1060405MRE2, effective 01 Jul 2026, no exit fees.",
+      "requiresSmartMeter": false,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
     },
     {
       "id": "agl-seniors-saver-eme",
