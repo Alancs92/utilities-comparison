@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Plan Comparator — Hurstville NSW</title>
+<style>
+  :root{
+    --bg: #12161d;
+    --panel: #1a212b;
+    --panel-2: #202a36;
+    --border: #2b3543;
+    --text: #e7ecf1;
+    --muted: #8a96a6;
+    --accent: #4fd9c9;
+    --amber: #f0b429;
+    --danger: #ef6461;
+    --violet: #8e7cc3;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.5; padding:32px 20px 80px; }
+  .wrap{ max-width:1200px; margin:0 auto; }
+
+  header{ margin-bottom:24px; border-bottom:1px solid var(--border); padding-bottom:20px; }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  h1{ font-size:27px; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em; }
+  .sub{ color:var(--muted); font-size:14px; max-width:680px; }
+
+  .callout{
+    background: linear-gradient(180deg, rgba(240,180,41,0.08), rgba(240,180,41,0.02));
+    border:1px solid rgba(240,180,41,0.35); border-radius:10px; padding:14px 16px; margin:18px 0; font-size:13px; color:#f3d78f;
+  }
+  .callout.violet{ background: linear-gradient(180deg, rgba(142,124,195,0.1), rgba(142,124,195,0.02)); border-color: rgba(142,124,195,0.4); color:#cfc4ea; }
+  .callout b{ color:var(--amber); }
+  .callout.violet b{ color:var(--violet); }
+
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:12px; margin:20px 0 28px; }
+  .stat{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .stat .k{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:6px; }
+  .stat .v{ font-family:var(--mono); font-size:19px; font-weight:600; }
+  .stat .v span{ font-size:12px; color:var(--muted); font-weight:400; }
+
+  h2{ font-size:16px; margin:0 0 4px; }
+  .section-desc{ color:var(--muted); font-size:13px; margin-bottom:14px; }
+  section{ margin-bottom:36px; }
+
+  .controls{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px; }
+  .field label{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
+  .field input, .field select{ width:100%; background:var(--panel-2); border:1px solid var(--border); border-radius:6px;
+    color:var(--text); font-family:var(--mono); font-size:13px; padding:8px 9px; }
+  .field input:focus, .field select:focus{ outline:none; border-color:var(--accent); }
+
+  table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12.5px; }
+  thead th{ text-align:right; padding:9px 10px; border-bottom:1px solid var(--border);
+    font-family:var(--sans); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; cursor:pointer; user-select:none; }
+  thead th.sortable:hover{ color:var(--accent); }
+  thead th:nth-child(1), thead th:nth-child(2), thead th:nth-child(3), thead th:nth-child(4){ text-align:left; }
+  tbody td{ text-align:right; padding:8px 10px; border-bottom:1px solid var(--border); }
+  tbody td:nth-child(1), tbody td:nth-child(2), tbody td:nth-child(3), tbody td:nth-child(4){ text-align:left; }
+  tbody tr.current{ background:rgba(79,217,201,0.07); }
+  tbody tr.current td:nth-child(3){ color:var(--accent); font-weight:600; }
+  tbody tr:hover{ background:rgba(255,255,255,0.02); }
+  .badge{ font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; padding:2px 6px; border-radius:4px; font-family:var(--sans); font-weight:600; }
+  .badge.block{ background:rgba(79,217,201,0.15); color:var(--accent); }
+  .badge.single_rate{ background:rgba(142,124,195,0.18); color:var(--violet); }
+  .badge.time_of_use{ background:rgba(240,180,41,0.18); color:var(--amber); }
+  .table-scroll{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; }
+  .table-scroll table{ min-width:760px; }
+  .rank{ color:var(--muted); width:24px; display:inline-block; }
+  .notes-cell{ max-width:260px; color:var(--muted); font-family:var(--sans); font-size:11.5px; white-space:normal; }
+
+  td.best{ color:var(--accent); font-weight:700; }
+  tbody tr.baseline{ background:rgba(79,217,201,0.06); }
+  tbody tr.baseline td:first-child{ color:var(--accent); font-weight:600; }
+
+  .legend{ display:flex; gap:18px; margin-top:10px; font-size:12px; color:var(--muted); flex-wrap:wrap; }
+  footer{ margin-top:40px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:12px; }
+  footer ul{ padding-left:18px; margin:8px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Energy plan tracker · Ausgrid / postcode 2220</div>
+    <h1>Power Plan Comparator</h1>
+    <div class="sub" id="headerSub"></div>
+  </header>
+
+  <div class="callout">
+    <b>On your $334.37 GloBird bill:</b> it included a $162.27 one-off true-up adjustment from correcting earlier estimated reads — not a recurring cost. All calculations below use only current, ongoing rates against your actual usage.
+  </div>
+
+  <div class="callout violet">
+    <b>On Time of Use plans:</b> you don't have a smart meter, and most TOU plans require one to bill correctly — so the 30 Finder.com.au results filtered to "Time of Use" aren't realistically available to you right now. They're hidden by default below (toggle "Show TOU plans" if you get a smart meter installed, or just want to see them for reference).
+  </div>
+
+  <div class="stat-row" id="statRow"></div>
+
+  <section>
+    <h2>Assumptions</h2>
+    <div class="section-desc">Adjust these and every table below recalculates.</div>
+    <div class="controls">
+      <div class="field"><label>Baseline usage (kWh/day)</label><input type="number" id="baselineUsage" step="0.01"></div>
+      <div class="field"><label>Billing days</label><input type="number" id="billingDays" step="1"></div>
+      <div class="field"><label>TOU peak share (%)</label><input type="number" id="peakShare" value="50" step="5" min="0" max="100"></div>
+      <div class="field"><label>Tariff type filter</label>
+        <select id="typeFilter">
+          <option value="all">All types</option>
+          <option value="block">Block (daily threshold)</option>
+          <option value="single_rate">Single rate</option>
+          <option value="time_of_use">Time of use</option>
+        </select>
+      </div>
+      <div class="field"><label>Show TOU plans (need smart meter)</label>
+        <select id="showIneligible">
+          <option value="no" selected>No — hide (no smart meter)</option>
+          <option value="yes">Yes — show anyway</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>All plans — ranked by estimated cost</h2>
+    <div class="section-desc">Sorted cheapest → priciest at your baseline usage. Tick "Compare" on a few to build the detailed ± range table below. Click column headers to re-sort.</div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Compare</th>
+            <th class="sortable" data-sort="retailer">Retailer</th>
+            <th class="sortable" data-sort="planName">Plan</th>
+            <th>Type</th>
+            <th class="sortable" data-sort="dailyCharge">Supply</th>
+            <th>Usage rate</th>
+            <th class="sortable" data-sort="discountPct">Discount</th>
+            <th class="sortable" data-sort="total">Est. /cycle</th>
+            <th class="sortable" data-sort="perYear">Est. /yr</th>
+          </tr>
+        </thead>
+        <tbody id="allPlansBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Usage range settings</h2>
+    <div class="section-desc">Sweep baseline usage by ± a percentage range, for the plans you've ticked "Compare" on above.</div>
+    <div class="controls">
+      <div class="field"><label>Range min (%)</label><input type="number" id="rangeMin" value="-20" step="5"></div>
+      <div class="field"><label>Range max (%)</label><input type="number" id="rangeMax" value="20" step="5"></div>
+      <div class="field"><label>Step (%)</label><input type="number" id="rangeStep" value="5" step="5"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Detailed comparison — selected plans across the usage range</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr id="tableHead"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="legend"><span>● = cheapest of the selected plans for that row</span></div>
+  </section>
+
+  <footer>
+    <b>Methodology</b>
+    <ul>
+      <li><b>Block</b> tariffs: kWh up to (threshold × days) billed at the low rate, remainder at the high rate, matching your current GLOSAVE structure.</li>
+      <li><b>Single rate</b> tariffs: all usage billed at one rate (high rate ignored).</li>
+      <li><b>Time of use</b> tariffs: usage split by the "peak share" slider between the low (off-peak) and high (peak) rates — an approximation, since real TOU billing depends on the actual time energy is used.</li>
+      <li>Discount % is an ongoing conditional discount (e.g. pay-on-time, direct debit) applied to the subtotal — separate from one-off sign-up credits, which are noted per-plan but not counted as recurring savings.</li>
+    </ul>
+    Data lives in <span style="color:var(--muted)">data/plans.json</span> and is synced into this file by <span style="color:var(--muted)">cli/plans.py export-html</span>. See the repo README for how to add or update plans.
+  </footer>
+
+</div>
+
+<script>
+// __PLANS_DATA_START__
+const PLANS_DATA = {
+  "meta": {
+    "generatedBy": "scripts_build_json.py",
+    "lastUpdated": "2026-07-18",
+    "schemaVersion": 1,
+    "notes": [
+      "tariffType 'block' = daily-usage-threshold stepped tariff (rateLow up to stepThresholdKwhPerDay, then rateHigh).",
+      "tariffType 'single_rate' = one flat usage rate (rateLow == rateHigh).",
+      "tariffType 'time_of_use' = rateLow/rateHigh represent off-peak/peak (or similar) rates that vary by time of day, NOT by daily volume. Actual cost depends on the household's peak-vs-off-peak usage split, which is unknown - the calculator applies an adjustable blend (see peakSharePct) as an approximation only.",
+      "discountPct is an ONGOING conditional discount (e.g. pay-on-time, direct debit) applied to the subtotal. It is distinct from one-off sign-up credits, which are stored in 'notes' and not applied to the recurring cost calculation.",
+      "Finder's own referenceComparisonPct/estimatedAnnualCost figures (folded into notes) reflect FINDER's assumed usage, not this household's - they are informational only, not used in this repo's calculations."
+    ]
+  },
+  "household": {
+    "supplyAddress": "Hurstville NSW 2220",
+    "distributor": "Ausgrid",
+    "nmi": "REDACTED",
+    "postcode": "2220",
+    "avgDailyUsageKwh": 17.49,
+    "billingCycleDays": 28,
+    "currentPlanId": "globird-glosave",
+    "notes": "Baseline usage taken from GloBird invoice REDACTED (15-Jun-2026 to 12-Jul-2026), which states an average daily usage of 17.49 kWh. Household does NOT have a smart/interval meter, so Time of Use tariffs are not realistically accessible (most TOU plans require a smart meter) - block and single_rate plans are the ones that actually apply.",
+    "hasSmartMeter": false,
+    "meterType": "Basic (accumulation) meter"
+  },
+  "plans": [
+    {
+      "id": "globird-glosave",
+      "retailer": "GloBird Energy",
+      "planName": "GLOSAVE",
+      "isCurrent": true,
+      "tariffType": "block",
+      "dailyCharge": 0.957,
+      "rateLow": 0.3245,
+      "rateHigh": 0.363,
+      "stepThresholdKwhPerDay": 15.0,
+      "discountPct": 3,
+      "source": "GloBird invoice REDACTED",
+      "sourceDate": "2026-07-13",
+      "notes": "Current plan. Discount = 2% pay-on-time + 1% direct debit, conditional. Daily charge/usage rates shown are from 1-Jul-2026 (most recent).",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "globird-boost-eme",
+      "retailer": "GloBird Energy",
+      "planName": "BOOST Residential (Flat Rate) - Ausgrid",
+      "isCurrent": false,
+      "tariffType": "block",
+      "dailyCharge": 1.254,
+      "rateLow": 0.2904,
+      "rateHigh": 0.3355,
+      "stepThresholdKwhPerDay": 15.0,
+      "discountPct": 10.75,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "EME estimated cost $1,860 -> $1,660/yr (1 discount, ~10.75%, exact condition unclear). Step threshold assumed 15kWh/day (same as GLOSAVE) - not confirmed on screenshot, verify against plan fact sheet.",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "1st-opal-eme",
+      "retailer": "1st Energy",
+      "planName": "1st Opal - Single Rate",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 1.3288,
+      "rateLow": 0.264,
+      "rateHigh": 0.264,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 3.98,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "EME estimated cost $1,760 -> $1,690/yr (1 discount, ~3.98%). Ongoing benefit period.",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "sumo-winter-saver-eme",
+      "retailer": "Sumo",
+      "planName": "Sumo Winter Saver",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 0.9182,
+      "rateLow": 0.2946,
+      "rateHigh": 0.2946,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "New-customer-of-Sumo eligibility condition applies. EME estimated cost ~$1,750/yr (exact figure cropped in screenshot), no discount.",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "nectr-power-perks-eme",
+      "retailer": "Nectr",
+      "planName": "Nectr Power Perks",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 1.0559,
+      "rateLow": 0.3316,
+      "rateHigh": 0.3316,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 10,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "EME estimated cost ~$1,980 -> ~$1,780/yr (2 discounts, figures partially cropped in screenshot - treat discount % as approximate).",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "kogan-free-first-eme",
+      "retailer": "Kogan Energy",
+      "planName": "Kogan Energy with free FIRST",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 0.988,
+      "rateLow": 0.3156,
+      "rateHigh": 0.3156,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "1 special offer noted (unspecified). EME estimated cost ~$1,880/yr, no ongoing discount applicable.",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "powershop-power-house-eme",
+      "retailer": "Powershop",
+      "planName": "Power House",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 0.988,
+      "rateLow": 0.3156,
+      "rateHigh": 0.3156,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "Environmental options plan. EME estimated cost $1,880/yr, no discount.",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "agl-seniors-saver-eme",
+      "retailer": "AGL",
+      "planName": "Residential Seniors Saver - New To AGL",
+      "isCurrent": false,
+      "tariffType": "single_rate",
+      "dailyCharge": 1.4291,
+      "rateLow": 0.2849,
+      "rateHigh": 0.2849,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Energy Made Easy screenshot",
+      "sourceDate": "2026-07-18",
+      "notes": "Likely requires a Seniors Card / new-to-AGL - confirm eligibility. No estimated cost visible in screenshot (cropped).",
+      "requiresSmartMeter": false
+    },
+    {
+      "id": "agl-smart-saver-finder",
+      "retailer": "AGL",
+      "planName": "Residential Smart Saver",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.5863,
+      "rateLow": 0.2163,
+      "rateHigh": 0.5418,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Up to $300 online sign-up credit across electricity & gas plans, varies by state, 90-day rolling offer. Finder reference-price comparison: -10% vs reference. Finder estimated annual cost: $2960/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "alinta-homedeal-smart-finder",
+      "retailer": "Alinta Energy",
+      "planName": "HomeDeal Smart",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.5524,
+      "rateLow": 0.2115,
+      "rateHigh": 0.5286,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -12% vs reference. Finder estimated annual cost: $2120/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "1st-quartz-finder",
+      "retailer": "1st Energy",
+      "planName": "1st Quartz",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.4102,
+      "rateLow": 0.1914,
+      "rateHigh": 0.4807,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -20% vs reference. Finder estimated annual cost: $1920/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "1st-opal-finder",
+      "retailer": "1st Energy",
+      "planName": "1st Opal",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.4102,
+      "rateLow": 0.1914,
+      "rateHigh": 0.4807,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -20% vs reference. Finder estimated annual cost: $1920/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "origin-go-variable-finder",
+      "retailer": "Origin Energy",
+      "planName": "Go Variable Ongoing",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.597,
+      "rateLow": 0.2164,
+      "rateHigh": 0.5412,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -10% vs reference. Finder estimated annual cost: $2160/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "agl-netflix-finder",
+      "retailer": "AGL",
+      "planName": "Residential Netflix Plan",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.6345,
+      "rateLow": 0.2163,
+      "rateHigh": 0.5416,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Netflix Standard with ads included; can upgrade tier for extra cost. Finder reference-price comparison: -9% vs reference. Finder estimated annual cost: $2180/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "origin-everyday-rewards-finder",
+      "retailer": "Origin Energy",
+      "planName": "Everyday Rewards Variable Ongoing",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.6575,
+      "rateLow": 0.2259,
+      "rateHigh": 0.5633,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Earn Everyday Rewards points, ~5000 points/yr, charged on bill. Finder reference-price comparison: -6% vs reference. Finder estimated annual cost: $2260/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "alinta-solarbalance-finder",
+      "retailer": "Alinta Energy",
+      "planName": "SolarBalance Choice",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.6582,
+      "rateLow": 0.2259,
+      "rateHigh": 0.5658,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -6% vs reference. Finder estimated annual cost: $2260/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "origin-basic-finder",
+      "retailer": "Origin Energy",
+      "planName": "Basic",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7653,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6014,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: 0% vs reference. Finder estimated annual cost: $2400/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "agl-solar-savers-finder",
+      "retailer": "AGL",
+      "planName": "Residential Solar Savers",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7626,
+      "rateLow": 0.2404,
+      "rateHigh": 0.602,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Up to $300 sign-up credit across electricity & gas plans. Finder reference-price comparison: 0% vs reference. Finder estimated annual cost: $2400/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "1st-standing-offer-finder",
+      "retailer": "1st Energy",
+      "planName": "Standing Offer",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.602,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: 0% vs reference. Finder estimated annual cost: $2400/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "flipped-freedom-finder",
+      "retailer": "Flipped Energy",
+      "planName": "Freedom Switched On 2.0",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.199,
+      "rateLow": 0.1487,
+      "rateHigh": 0.564,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -18% vs reference. Finder estimated annual cost: $2090/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "diamond-standing-finder",
+      "retailer": "Diamond Energy",
+      "planName": "Standing",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.602,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: 0% vs reference. Finder estimated annual cost: $2400/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "sumo-winter-saver-finder",
+      "retailer": "Sumo",
+      "planName": "Winter Saver",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 0.9548,
+      "rateLow": 0.2432,
+      "rateHigh": 0.447,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -22% vs reference. Finder estimated annual cost: $1930/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "sumo-sunrise-plus-tou-finder",
+      "retailer": "Sumo",
+      "planName": "Sunrise Plus Residential TOU",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0051,
+      "rateLow": 0.2507,
+      "rateHigh": 0.4609,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit for new residential electricity customers who join within 30 days; applied within 1-3 billing cycles. Finder reference-price comparison: -19% vs reference. Finder estimated annual cost: $2000/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "sumo-sunrise-tou-finder",
+      "retailer": "Sumo",
+      "planName": "Sunrise Residential TOU",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0051,
+      "rateLow": 0.2507,
+      "rateHigh": 0.4613,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -19% vs reference. Finder estimated annual cost: $2000/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "kogan-free-first-finder",
+      "retailer": "Kogan Energy",
+      "planName": "Kogan Energy with free FIRST",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0919,
+      "rateLow": 0.2286,
+      "rateHigh": 0.5724,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "12 months free FIRST membership for new Kogan Energy customers who sign up + switch to Kogan FIRST. Finder reference-price comparison: -16% vs reference. Finder estimated annual cost: $2070/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "powershop-power-house-finder",
+      "retailer": "Powershop",
+      "planName": "Power House",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0919,
+      "rateLow": 0.2286,
+      "rateHigh": 0.5724,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -16% vs reference. Finder estimated annual cost: $2070/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "kogan-current-first-finder",
+      "retailer": "Kogan Energy",
+      "planName": "Kogan Energy for current FIRST members",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0919,
+      "rateLow": 0.2286,
+      "rateHigh": 0.5724,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$100 (incl. GST) sign-up credit for eligible existing FIRST members. Finder reference-price comparison: -16% vs reference. Finder estimated annual cost: $2070/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "globird-wholesave-finder",
+      "retailer": "GloBird Energy",
+      "planName": "WHOLESAVE Resi",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.21,
+      "rateLow": 0.1631,
+      "rateHigh": 0.3573,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Time of Use meter required. Finder reference-price comparison: -15% vs reference. Finder estimated annual cost: $1970/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "ovo-one-plan-finder",
+      "retailer": "OVO Energy",
+      "planName": "The One Plan",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.4501,
+      "rateLow": 0.2138,
+      "rateHigh": 0.5357,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Interest Rewards - pays interest on credit balances after charges considered. Finder reference-price comparison: -14% vs reference. Finder estimated annual cost: $2080/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "globird-boost-finder",
+      "retailer": "GloBird Energy",
+      "planName": "BOOST Residential",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.32,
+      "rateLow": 0.231,
+      "rateHigh": 0.4345,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "NOTE: differs from EME-sourced BOOST figures - verify which is current before relying on it. Finder reference-price comparison: -13% vs reference. Finder estimated annual cost: $2130/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-nrma-elec-finder",
+      "retailer": "ENGIE",
+      "planName": "NRMA Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months, not redeemable for cash. Finder reference-price comparison: -12% vs reference. Finder estimated annual cost: $2110/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "sumo-homegrown-tou-finder",
+      "retailer": "Sumo",
+      "planName": "Homegrown Residential TOU",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0204,
+      "rateLow": 0.2801,
+      "rateHigh": 0.5155,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder reference-price comparison: -12% vs reference. Finder estimated annual cost: $2200/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-nrma-greenpower-finder",
+      "retailer": "ENGIE",
+      "planName": "NRMA GreenPower Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -12% vs reference. Finder estimated annual cost: $2170/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-perks-finder",
+      "retailer": "ENGIE",
+      "planName": "Perks Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -12% vs reference. Finder estimated annual cost: $2170/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "red-taronga-finder",
+      "retailer": "Red Energy",
+      "planName": "Red Taronga Plan",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.0092,
+      "rateLow": 0.2418,
+      "rateHigh": 0.4824,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Taronga Family Membership - 1 free child/family pass per year while an Active Pack member; address verification required. Finder reference-price comparison: -11% vs reference. Finder estimated annual cost: $2220/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-greenpower-finder",
+      "retailer": "ENGIE",
+      "planName": "GreenPower Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -11% vs reference. Finder estimated annual cost: $2140/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-everyday-finder",
+      "retailer": "ENGIE",
+      "planName": "Everyday Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -11% vs reference. Finder estimated annual cost: $2140/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    },
+    {
+      "id": "engie-home-business-finder",
+      "retailer": "ENGIE",
+      "planName": "Home Business Everyday Elec",
+      "isCurrent": false,
+      "tariffType": "time_of_use",
+      "dailyCharge": 1.7641,
+      "rateLow": 0.2404,
+      "rateHigh": 0.6019,
+      "stepThresholdKwhPerDay": null,
+      "discountPct": 0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -11% vs reference. Finder estimated annual cost: $2140/yr (Finder's own usage assumption, not this household's).",
+      "requiresSmartMeter": true
+    }
+  ]
+};
+// __PLANS_DATA_END__
+
+const swatchColors = ['#4fd9c9', '#f0b429', '#ef6461', '#8e7cc3', '#5b9bd5', '#e07a5f', '#7fb069', '#d88ec0'];
+let selected = new Set();
+let sortField = 'total';
+let sortDir = 1;
+
+function calcCost(plan, dailyUsage, days, peakSharePct){
+  const totalKwh = dailyUsage * days;
+  const supplyCost = days * plan.dailyCharge;
+  let usageCost;
+  if(plan.tariffType === 'block'){
+    const cap = (plan.stepThresholdKwhPerDay || 0) * days;
+    const lowKwh = Math.min(totalKwh, cap);
+    const highKwh = Math.max(0, totalKwh - cap);
+    usageCost = lowKwh * plan.rateLow + highKwh * plan.rateHigh;
+  } else if(plan.tariffType === 'single_rate'){
+    usageCost = totalKwh * plan.rateLow;
+  } else { // time_of_use
+    const peakFrac = Math.max(0, Math.min(100, peakSharePct)) / 100;
+    usageCost = totalKwh * (1-peakFrac) * plan.rateLow + totalKwh * peakFrac * plan.rateHigh;
+  }
+  const subtotal = supplyCost + usageCost;
+  const discount = subtotal * ((plan.discountPct||0)/100);
+  return { totalKwh, supplyCost, usageCost, subtotal, discount, total: subtotal - discount };
+}
+
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtRate(p){
+  if(p.tariffType === 'single_rate') return (p.rateLow*100).toFixed(2)+'c';
+  return (p.rateLow*100).toFixed(2)+'c \u2192 '+(p.rateHigh*100).toFixed(2)+'c';
+}
+
+function initControls(){
+  document.getElementById('baselineUsage').value = PLANS_DATA.household.avgDailyUsageKwh;
+  document.getElementById('billingDays').value = PLANS_DATA.household.billingCycleDays;
+  const h = PLANS_DATA.household;
+  document.getElementById('headerSub').textContent =
+    `${h.supplyAddress || ''} — ${h.distributor || ''} — baseline ${h.avgDailyUsageKwh} kWh/day over a ${h.billingCycleDays}-day cycle. ${PLANS_DATA.plans.length} plans tracked.`;
+}
+
+function eligiblePlans(){
+  const showIneligible = document.getElementById('showIneligible').value === 'yes';
+  const hasSmartMeter = PLANS_DATA.household.hasSmartMeter !== false;
+  if(showIneligible || hasSmartMeter) return PLANS_DATA.plans;
+  return PLANS_DATA.plans.filter(p => !p.requiresSmartMeter);
+}
+
+function renderStats(){
+  const h = PLANS_DATA.household;
+  const current = PLANS_DATA.plans.find(p=>p.isCurrent);
+  const days = parseFloat(document.getElementById('billingDays').value)||h.billingCycleDays;
+  const usage = parseFloat(document.getElementById('baselineUsage').value)||h.avgDailyUsageKwh;
+  const peak = parseFloat(document.getElementById('peakShare').value)||50;
+  const pool = eligiblePlans();
+  const cheapest = [...pool].sort((a,b)=>calcCost(a,usage,days,peak).total-calcCost(b,usage,days,peak).total)[0];
+  const stats = [
+    ['Baseline usage', usage.toFixed(2), 'kWh/day'],
+    ['Billing cycle', days, 'days'],
+    ['Plans tracked', PLANS_DATA.plans.length, ''],
+    ['Current plan cost', current? '$'+calcCost(current,usage,days,peak).total.toFixed(2):'—', '/cycle'],
+    ['Cheapest option', cheapest? '$'+calcCost(cheapest,usage,days,peak).total.toFixed(2):'—', cheapest? cheapest.retailer+' '+cheapest.planName:''],
+  ];
+  document.getElementById('statRow').innerHTML = stats.map(([k,v,s])=>`
+    <div class="stat"><div class="k">${k}</div><div class="v">${v} <span>${s}</span></div></div>`).join('');
+}
+
+function renderAllPlansTable(){
+  const h = PLANS_DATA.household;
+  const usage = parseFloat(document.getElementById('baselineUsage').value)||h.avgDailyUsageKwh;
+  const days = parseFloat(document.getElementById('billingDays').value)||h.billingCycleDays;
+  const peak = parseFloat(document.getElementById('peakShare').value)||50;
+  const typeFilter = document.getElementById('typeFilter').value;
+
+  let rows = eligiblePlans()
+    .filter(p => typeFilter==='all' || p.tariffType===typeFilter)
+    .map(p => ({ plan: p, ...calcCost(p, usage, days, peak) }));
+  rows.forEach(r => r.perYear = r.total/days*365);
+
+  rows.sort((a,b)=>{
+    let av, bv;
+    if(sortField==='retailer'){ av=a.plan.retailer; bv=b.plan.retailer; }
+    else if(sortField==='planName'){ av=a.plan.planName; bv=b.plan.planName; }
+    else if(sortField==='dailyCharge'){ av=a.plan.dailyCharge; bv=b.plan.dailyCharge; }
+    else if(sortField==='discountPct'){ av=a.plan.discountPct||0; bv=b.plan.discountPct||0; }
+    else if(sortField==='perYear'){ av=a.perYear; bv=b.perYear; }
+    else { av=a.total; bv=b.total; }
+    if(typeof av==='string') return av.localeCompare(bv)*sortDir;
+    return (av-bv)*sortDir;
+  });
+
+  document.getElementById('allPlansBody').innerHTML = rows.map(r=>{
+    const p = r.plan;
+    return `<tr class="${p.isCurrent?'current':''}" title="${escapeHtml(p.notes||'')}">
+      <td><input type="checkbox" data-plan-id="${p.id}" ${selected.has(p.id)?'checked':''}></td>
+      <td>${escapeHtml(p.retailer)}</td>
+      <td>${escapeHtml(p.planName)}${p.isCurrent?' (current)':''}</td>
+      <td><span class="badge ${p.tariffType}">${p.tariffType.replace('_',' ')}</span></td>
+      <td>${(p.dailyCharge*100).toFixed(2)}c</td>
+      <td>${fmtRate(p)}</td>
+      <td>${p.discountPct?p.discountPct+'%':'—'}</td>
+      <td>$${r.total.toFixed(2)}</td>
+      <td>$${r.perYear.toFixed(0)}</td>
+    </tr>`;
+  }).join('');
+
+  document.querySelectorAll('#allPlansBody input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      const id = e.target.getAttribute('data-plan-id');
+      if(e.target.checked) selected.add(id); else selected.delete(id);
+      renderComparisonTable();
+    });
+  });
+}
+
+function renderComparisonTable(){
+  const h = PLANS_DATA.household;
+  const baseline = parseFloat(document.getElementById('baselineUsage').value)||h.avgDailyUsageKwh;
+  const days = parseFloat(document.getElementById('billingDays').value)||h.billingCycleDays;
+  const peak = parseFloat(document.getElementById('peakShare').value)||50;
+  const rMin = parseFloat(document.getElementById('rangeMin').value);
+  const rMax = parseFloat(document.getElementById('rangeMax').value);
+  const rStep = parseFloat(document.getElementById('rangeStep').value)||5;
+
+  const plans = PLANS_DATA.plans.filter(p=>selected.has(p.id));
+  const head = document.getElementById('tableHead');
+  const body = document.getElementById('tableBody');
+
+  if(plans.length===0){
+    head.innerHTML = '<th>Variation</th>';
+    body.innerHTML = `<tr><td style="color:var(--muted); font-family:var(--sans); padding:16px;">Tick "Compare" on plans above to build this table.</td></tr>`;
+    return;
+  }
+
+  head.innerHTML = `<th>Variation</th><th>kWh/day</th>` +
+    plans.map((p,i)=>`<th style="color:${swatchColors[i%swatchColors.length]}">${escapeHtml(p.retailer)} — ${escapeHtml(p.planName)}</th>`).join('');
+
+  let pctSteps = [];
+  for(let pct=rMin; pct<=rMax+0.0001; pct+=rStep) pctSteps.push(pct);
+
+  body.innerHTML = pctSteps.map(pct=>{
+    const dailyUsage = baseline * (1+pct/100);
+    const results = plans.map(p=>calcCost(p, dailyUsage, days, peak));
+    const totals = results.map(r=>r.total);
+    const minTotal = Math.min(...totals);
+    const isBaseline = Math.abs(pct) < 0.0001;
+    const cells = results.map(r=>{
+      const isBest = Math.abs(r.total-minTotal)<0.005 && plans.length>1;
+      return `<td class="${isBest?'best':''}">$${r.total.toFixed(2)}</td>`;
+    }).join('');
+    return `<tr class="${isBaseline?'baseline':''}">
+      <td>${pct>0?'+':''}${pct.toFixed(0)}%</td>
+      <td>${dailyUsage.toFixed(2)}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+}
+
+document.querySelectorAll('thead th.sortable').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const field = th.getAttribute('data-sort');
+    if(sortField===field) sortDir *= -1; else { sortField = field; sortDir = 1; }
+    renderAllPlansTable();
+  });
+});
+
+['baselineUsage','billingDays','peakShare','typeFilter','showIneligible'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{ renderStats(); renderAllPlansTable(); renderComparisonTable(); });
+});
+['rangeMin','rangeMax','rangeStep'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderComparisonTable);
+});
+
+initControls();
+const currentPlan = PLANS_DATA.plans.find(p=>p.isCurrent);
+if(currentPlan) selected.add(currentPlan.id);
+renderStats();
+renderAllPlansTable();
+renderComparisonTable();
+</script>
+</body>
+</html>
