@@ -668,13 +668,17 @@
       "planName": "HomeDeal Smart",
       "tariffType": "single_rate",
       "dailyCharge": 1.4628,
-      "rateLow": 0.2016,
-      "rateHigh": 0.2016,
+      "rateLow": 0.2916,
+      "rateHigh": 0.2916,
       "discountPct": 0.0,
-      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
-      "sourceDate": "2026-07-18",
-      "notes": "Finder: 12% less than reference price, est. $2,140/yr (Finder's usage assumption).",
-      "stepThresholdKwhPerDay": null
+      "source": "Finder + Energy Made Easy (EME corrects usage rate)",
+      "sourceDate": "2026-07-19",
+      "notes": "CORRECTED 2026-07-19: usage rate was 20.16c (Finder transcription error); EME official page (Plan ID ALI1115066MRE9) confirms 29.16c/kWh and 146.28c/day. Moves this plan from ~$139.69 to ~$183.76/cycle - it was NOT actually cheapest. Solar FiT +3c/kWh (not modelled). Move fees stored: move-in $17.26, move-out final read $17.26. Other network fees (not move-relevant): disconnection $242.39, reconnection $123.56 / after-hours $170.17. EME est: Low $1,440 / Med $2,130 / High $2,840. No discounts. Meter: Basic.",
+      "stepThresholdKwhPerDay": null,
+      "fees": {
+        "connectionFee": 17.26,
+        "disconnectionFee": 17.26
+      }
     },
     {
       "id": "1st-quartz-finder-sr",
@@ -867,8 +871,10 @@
       "discountPct": 0.0,
       "source": "Energy Made Easy official results page",
       "sourceDate": "2026-07-18",
-      "notes": "No lock-in contract. EME estimated cost $1,430/yr, no discount. 3 conditions apply per EME (not detailed in the screenshot - check these before switching, since this plan undercuts every other tracked plan on rate alone). Meter needed: all types.",
-      "stepThresholdKwhPerDay": null
+      "notes": "NOT ELIGIBLE for this household. EME conditions (Plan ID FEA1141770MRE1): (1) requires NRN HomeGrid solar & battery system installed - FAILS; (2) usage >15 kWh/day - OK (household 17.49); (3) NRN customer who owns AND occupies the home only - FAILS. Excluded from default ranking via the ineligible flag. No lock-in; EME est $1,430/yr; +0c solar; meter: all types.",
+      "stepThresholdKwhPerDay": null,
+      "ineligible": true,
+      "ineligibleReason": "Requires the NRN HomeGrid solar+battery system installed AND being an NRN customer who owns+occupies the home; household does not qualify (per EME eligibility tab, Plan ID FEA1141770MRE1)."
     },
     {
       "id": "red-living-energy-saver-eme",

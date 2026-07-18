@@ -92,6 +92,8 @@ Each plan has:
 | `notes` | Eligibility conditions, sign-up credits, caveats, anything that doesn't fit a field |
 | `isCurrent` | Marks the household's current plan |
 | `fees` | Optional. `{connectionFee, disconnectionFee}` in dollars — one-off move-in/move-out fees. **Only relevant if physically relocating address**, not on a same-address retailer switch (which is what this tool is normally used for). Excluded from cost calculations unless explicitly included (see below). |
+| `ineligible` | Optional `true` when the household structurally can't take this plan (e.g. it requires a solar+battery system, membership, or homeownership the household doesn't have). Such plans are **hidden by default** from `list`/`calc` and the web tool — like `requiresSmartMeter`, but for reasons other than metering. Set with `cli/plans.py add/update --ineligible-reason "..."`; clear with `--eligible`. Show them anyway with `--include-ineligible` (CLI) or the "Show ineligible" toggle (web). |
+| `ineligibleReason` | Human-readable reason recorded alongside `ineligible: true`. |
 
 ### Tariff types
 

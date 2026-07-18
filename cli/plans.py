@@ -93,6 +93,7 @@ def cmd_list(args, data):
         plans = [p for p in plans if p["tariffType"] == args.type]
     if not args.include_ineligible:
         household = data["household"]
+        plans = [p for p in plans if not p.get("ineligible")]
         if not household.get("hasSmartMeter", True):
             plans = [p for p in plans if not p.get("requiresSmartMeter")]
 
@@ -149,8 +150,10 @@ def cmd_calc(args, data):
     usage = args.usage or household["avgDailyUsageKwh"]
     days = args.days or household["billingCycleDays"]
     plans = data["plans"]
-    if not args.include_ineligible and not household.get("hasSmartMeter", True):
-        plans = [p for p in plans if not p.get("requiresSmartMeter")]
+    if not args.include_ineligible:
+        plans = [p for p in plans if not p.get("ineligible")]
+        if not household.get("hasSmartMeter", True):
+            plans = [p for p in plans if not p.get("requiresSmartMeter")]
     results = []
     for p in plans:
         c = calc_plan_cost(p, usage, days, args.peak_share)
@@ -200,6 +203,12 @@ def _plan_from_args(args, existing=None):
         fees["disconnectionFee"] = round(args.disconnection_fee_cents / 100, 2)
     if fees:
         plan["fees"] = fees
+    if getattr(args, "ineligible_reason", None) is not None:
+        plan["ineligible"] = True
+        plan["ineligibleReason"] = args.ineligible_reason
+    if getattr(args, "eligible", False):
+        plan["ineligible"] = False
+        plan.pop("ineligibleReason", None)
     return plan
 
 
@@ -319,6 +328,8 @@ def main():
         sp.add_argument("--notes")
         sp.add_argument("--connection-fee-cents", type=float, help="One-off move-in/new-connection fee, only relevant if physically moving address")
         sp.add_argument("--disconnection-fee-cents", type=float, help="One-off disconnection fee, only relevant if physically moving address")
+        sp.add_argument("--ineligible-reason", help="Mark this plan ineligible for the household (hidden by default; show with --include-ineligible), giving the reason, e.g. 'requires solar+battery & NRN homeownership'")
+        sp.add_argument("--eligible", action="store_true", help="Clear a previously-set ineligible flag")
         sp.add_argument("--current", action="store_true", help="Mark this as the household's current plan")
 
     p_add = sub.add_parser("add", help="Add a new plan")
