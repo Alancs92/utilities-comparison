@@ -98,6 +98,10 @@
     <b>On Time of Use plans:</b> you don't have a smart meter, and most TOU plans require one to bill correctly — so the 30 Finder.com.au results filtered to "Time of Use" aren't realistically available to you right now. They're hidden by default below (toggle "Show TOU plans" if you get a smart meter installed, or just want to see them for reference).
   </div>
 
+  <div class="callout">
+    <b>On one-off fees:</b> connection/disconnection fees (e.g. $123.56 seen on 1st Energy's plan page) apply when physically moving address — not on a same-address retailer switch, which is what a plan comparison is normally for. They're tracked per-plan where known and folded into the numbers below only if you flip "Physically moving address?" to yes.
+  </div>
+
   <div class="stat-row" id="statRow"></div>
 
   <section>
@@ -121,6 +125,12 @@
           <option value="yes">Yes — show anyway</option>
         </select>
       </div>
+      <div class="field"><label>Physically moving address?</label>
+        <select id="movingHouse">
+          <option value="no" selected>No — same-address switch</option>
+          <option value="yes">Yes — include move fees</option>
+        </select>
+      </div>
     </div>
   </section>
 
@@ -138,6 +148,7 @@
             <th class="sortable" data-sort="dailyCharge">Supply</th>
             <th>Usage rate</th>
             <th class="sortable" data-sort="discountPct">Discount</th>
+            <th>Move fees</th>
             <th class="sortable" data-sort="total">Est. /cycle</th>
             <th class="sortable" data-sort="perYear">Est. /yr</th>
           </tr>
@@ -251,11 +262,15 @@ const PLANS_DATA = {
       "rateLow": 0.264,
       "rateHigh": 0.264,
       "stepThresholdKwhPerDay": null,
-      "discountPct": 3.98,
+      "discountPct": 4.0,
       "source": "Energy Made Easy screenshot",
       "sourceDate": "2026-07-18",
-      "notes": "EME estimated cost $1,760 -> $1,690/yr (1 discount, ~3.98%). Ongoing benefit period.",
-      "requiresSmartMeter": false
+      "notes": "Confirmed via 1st Energy's official EME plan page (2026-07-18): 132.88c/day supply, 26.40c/kWh usage, a further 4% pay-on-time discount off usage and supply charges. No lock-in contract. Solar feed-in 1c/kWh (first 5kWh/day), 0.1c/kWh thereafter (not used in this calculator, no solar on this account). Move-in/new-connection fee $123.56, disconnection fee $123.56 (both only apply if physically moving address, not on a same-address retailer switch). Also has a $15 cheque dishonour fee and $7.50 direct debit dishonour fee (account-admin fees, not switching-related).",
+      "requiresSmartMeter": false,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
     },
     {
       "id": "sumo-winter-saver-eme",
@@ -526,7 +541,7 @@ const PLANS_DATA = {
       "discountPct": 0,
       "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
       "sourceDate": "2026-07-18",
-      "notes": "Finder reference-price comparison: -18% vs reference. Finder estimated annual cost: $2090/yr (Finder's own usage assumption, not this household's).",
+      "notes": "Finder: 18% less than reference price, est. $2,010/yr (corrected from an earlier $2,090 misread).",
       "requiresSmartMeter": true
     },
     {
@@ -648,13 +663,13 @@ const PLANS_DATA = {
       "isCurrent": false,
       "tariffType": "time_of_use",
       "dailyCharge": 1.21,
-      "rateLow": 0.1631,
+      "rateLow": 0.1531,
       "rateHigh": 0.3573,
       "stepThresholdKwhPerDay": null,
       "discountPct": 0,
       "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
       "sourceDate": "2026-07-18",
-      "notes": "Time of Use meter required. Finder reference-price comparison: -15% vs reference. Finder estimated annual cost: $1970/yr (Finder's own usage assumption, not this household's).",
+      "notes": "Membership required for this plan (per Finder listing). Finder: 15% less than reference price, est. $1,970/yr. Corrected 2026-07-18: low rate was misread as 16.31c in the original low-resolution screenshot, confirmed as 15.31c from a clearer image.",
       "requiresSmartMeter": true
     },
     {
@@ -663,14 +678,14 @@ const PLANS_DATA = {
       "planName": "The One Plan",
       "isCurrent": false,
       "tariffType": "time_of_use",
-      "dailyCharge": 1.4501,
+      "dailyCharge": 1.4105,
       "rateLow": 0.2138,
       "rateHigh": 0.5357,
       "stepThresholdKwhPerDay": null,
       "discountPct": 0,
       "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
       "sourceDate": "2026-07-18",
-      "notes": "Interest Rewards - pays interest on credit balances after charges considered. Finder reference-price comparison: -14% vs reference. Finder estimated annual cost: $2080/yr (Finder's own usage assumption, not this household's).",
+      "notes": "Interest Rewards - pays interest on credit balances after charges considered. Corrected 2026-07-18: daily charge was 145.01c in an earlier lower-res read, confirmed as 141.05c from a clearer image.",
       "requiresSmartMeter": true
     },
     {
@@ -678,15 +693,15 @@ const PLANS_DATA = {
       "retailer": "GloBird Energy",
       "planName": "BOOST Residential",
       "isCurrent": false,
-      "tariffType": "time_of_use",
-      "dailyCharge": 1.32,
-      "rateLow": 0.231,
-      "rateHigh": 0.4345,
-      "stepThresholdKwhPerDay": null,
-      "discountPct": 0,
+      "tariffType": "block",
+      "dailyCharge": 1.254,
+      "rateLow": 0.2904,
+      "rateHigh": 0.3355,
+      "stepThresholdKwhPerDay": 15.0,
+      "discountPct": 9.76,
       "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Time of Use filter)",
       "sourceDate": "2026-07-18",
-      "notes": "NOTE: differs from EME-sourced BOOST figures - verify which is current before relying on it. Finder reference-price comparison: -13% vs reference. Finder estimated annual cost: $2130/yr (Finder's own usage assumption, not this household's).",
+      "notes": "Corrected 2026-07-18: earlier read (132.00c/day, 23.10-43.45c/kWh, tariffType time_of_use) was from a low-res screenshot and wrong on every count. A clearer image confirms this is actually a block tariff, and the numbers now match globird-boost-eme almost exactly - both sources agree. Finder: 16% less than reference, +10% conditional discount, est. $2,050/yr ($1,850 if conditional discount met).",
       "requiresSmartMeter": true
     },
     {
@@ -816,6 +831,210 @@ const PLANS_DATA = {
       "sourceDate": "2026-07-18",
       "notes": "$50 (incl. GST) sign-up credit, one-off, first 12 months. Finder reference-price comparison: -11% vs reference. Finder estimated annual cost: $2140/yr (Finder's own usage assumption, not this household's).",
       "requiresSmartMeter": true
+    },
+    {
+      "id": "agl-smart-saver-finder-sr",
+      "retailer": "AGL",
+      "planName": "Residential Smart Saver (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.4997,
+      "rateLow": 0.2962,
+      "rateHigh": 0.2962,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 10% less than reference price, est. $2,180/yr (Finder's usage assumption). Up to $300 online sign-up credit across electricity & gas plans, varies by state, 90-day rolling offer.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "alinta-homedeal-smart-finder-sr",
+      "retailer": "Alinta Energy",
+      "planName": "HomeDeal Smart",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.4628,
+      "rateLow": 0.2016,
+      "rateHigh": 0.2016,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 12% less than reference price, est. $2,140/yr (Finder's usage assumption).",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "1st-quartz-finder-sr",
+      "retailer": "1st Energy",
+      "planName": "1st Quartz",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.3288,
+      "rateLow": 0.264,
+      "rateHigh": 0.264,
+      "discountPct": 4.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Confirmed via 1st Energy's official EME plan page (2026-07-18): 132.88c/day supply, 26.40c/kWh usage, a further 4% pay-on-time discount off usage and supply charges. No lock-in contract. Solar feed-in 1c/kWh (first 5kWh/day), 0.1c/kWh thereafter (not used in this calculator, no solar on this account). Move-in/new-connection fee $123.56, disconnection fee $123.56 (both only apply if physically moving address, not on a same-address retailer switch). Also has a $15 cheque dishonour fee and $7.50 direct debit dishonour fee (account-admin fees, not switching-related).",
+      "stepThresholdKwhPerDay": null,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
+    },
+    {
+      "id": "1st-opal-finder-sr",
+      "retailer": "1st Energy",
+      "planName": "1st Opal (Finder, Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.3288,
+      "rateLow": 0.264,
+      "rateHigh": 0.264,
+      "discountPct": 4.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Confirmed via 1st Energy's official EME plan page (2026-07-18): 132.88c/day supply, 26.40c/kWh usage, a further 4% pay-on-time discount off usage and supply charges. No lock-in contract. Solar feed-in 1c/kWh (first 5kWh/day), 0.1c/kWh thereafter (not used in this calculator, no solar on this account). Move-in/new-connection fee $123.56, disconnection fee $123.56 (both only apply if physically moving address, not on a same-address retailer switch). Also has a $15 cheque dishonour fee and $7.50 direct debit dishonour fee (account-admin fees, not switching-related).",
+      "stepThresholdKwhPerDay": null,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
+    },
+    {
+      "id": "origin-go-variable-finder-sr",
+      "retailer": "Origin Energy",
+      "planName": "Go Variable Ongoing (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.4999,
+      "rateLow": 0.2962,
+      "rateHigh": 0.2962,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 10% less than reference price, est. $2,180/yr.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "agl-netflix-finder-sr",
+      "retailer": "AGL",
+      "planName": "Residential Netflix Plan (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.6345,
+      "rateLow": 0.3436,
+      "rateHigh": 0.3436,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 9% less than reference price, est. $2,200/yr. Netflix Standard with ads included; can upgrade tier for extra cost.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "origin-everyday-rewards-finder-sr",
+      "retailer": "Origin Energy",
+      "planName": "Everyday Rewards Variable Ongoing (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.5623,
+      "rateLow": 0.3115,
+      "rateHigh": 0.3115,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 6% less than reference price, est. $2,260/yr. Earn Everyday Rewards points, ~5000pts/yr, charged on bill.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "alinta-solarbalance-finder-sr",
+      "retailer": "Alinta Energy",
+      "planName": "SolarBalance Choice (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.5628,
+      "rateLow": 0.3115,
+      "rateHigh": 0.3115,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid, Single Rate filter)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 6% less than reference price, est. $2,260/yr.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "flipped-anytime-finder",
+      "retailer": "Flipped Energy",
+      "planName": "Anytime Switched On 2.2",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.199,
+      "rateLow": 0.2871,
+      "rateHigh": 0.2871,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 18% less than reference price, est. $2,010/yr.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "sumo-sunrise-sr-finder",
+      "retailer": "Sumo",
+      "planName": "Sunrise Residential Single Rate",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.9772,
+      "rateLow": 0.307,
+      "rateHigh": 0.307,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 18% less than reference price, est. $2,040/yr.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "sumo-sunrise-plus-sr-finder",
+      "retailer": "Sumo",
+      "planName": "Sunrise Plus Residential Single Rate",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.9768,
+      "rateLow": 0.3069,
+      "rateHigh": 0.3069,
+      "discountPct": 2.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 18% less than reference, +2% conditional discount, est. $2,040/yr ($1,990 if conditional discount met). $50 (incl. GST) sign-up credit for new NSW residential customers, applied after 6 months active, offer ends 30 Jun 2026.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "kogan-current-first-sr-finder",
+      "retailer": "Kogan Energy",
+      "planName": "Kogan Energy for current FIRST members (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.988,
+      "rateLow": 0.3156,
+      "rateHigh": 0.3156,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 16% less than reference price, est. $2,090/yr. $100 (incl. GST) sign-up credit for existing Kogan FIRST members.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "globird-wholesave-sr-finder",
+      "retailer": "GloBird Energy",
+      "planName": "WHOLESAVE Resi (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.869,
+      "rateLow": 0.2748,
+      "rateHigh": 0.2748,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Membership required (per Finder listing). Finder: 13% less than reference price, est. $2,090/yr.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "ovo-one-plan-sr-finder",
+      "retailer": "OVO Energy",
+      "planName": "The One Plan (Single Rate)",
+      "tariffType": "single_rate",
+      "dailyCharge": 1.3296,
+      "rateLow": 0.2949,
+      "rateHigh": 0.2949,
+      "discountPct": 0.0,
+      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
+      "sourceDate": "2026-07-18",
+      "notes": "Finder: 14% less than reference price, est. $2,100/yr. Interest Rewards - OVO pays 3% interest on credit balances after monthly charges considered, prorated.",
+      "stepThresholdKwhPerDay": null
     }
   ]
 };
@@ -896,6 +1115,12 @@ function renderAllPlansTable(){
   let rows = eligiblePlans()
     .filter(p => typeFilter==='all' || p.tariffType===typeFilter)
     .map(p => ({ plan: p, ...calcCost(p, usage, days, peak) }));
+  const movingHouse = document.getElementById('movingHouse').value === 'yes';
+  rows.forEach(r => {
+    const fees = r.plan.fees || {};
+    r.moveFees = (fees.connectionFee||0) + (fees.disconnectionFee||0);
+    if(movingHouse) r.total += r.moveFees;
+  });
   rows.forEach(r => r.perYear = r.total/days*365);
 
   rows.sort((a,b)=>{
@@ -920,6 +1145,7 @@ function renderAllPlansTable(){
       <td>${(p.dailyCharge*100).toFixed(2)}c</td>
       <td>${fmtRate(p)}</td>
       <td>${p.discountPct?p.discountPct+'%':'—'}</td>
+      <td>${r.moveFees>0 ? '$'+r.moveFees.toFixed(2)+(movingHouse?' (incl.)':' (n/a)') : '—'}</td>
       <td>$${r.total.toFixed(2)}</td>
       <td>$${r.perYear.toFixed(0)}</td>
     </tr>`;
@@ -985,7 +1211,7 @@ document.querySelectorAll('thead th.sortable').forEach(th=>{
   });
 });
 
-['baselineUsage','billingDays','peakShare','typeFilter','showIneligible'].forEach(id=>{
+['baselineUsage','billingDays','peakShare','typeFilter','showIneligible','movingHouse'].forEach(id=>{
   document.getElementById(id).addEventListener('input', ()=>{ renderStats(); renderAllPlansTable(); renderComparisonTable(); });
 });
 ['rangeMin','rangeMax','rangeStep'].forEach(id=>{
