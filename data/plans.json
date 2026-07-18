@@ -847,10 +847,14 @@
       "rateLow": 0.2949,
       "rateHigh": 0.2949,
       "discountPct": 0.0,
-      "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
-      "sourceDate": "2026-07-18",
-      "notes": "Finder: 14% less than reference price, est. $2,100/yr. Interest Rewards - OVO pays 3% interest on credit balances after monthly charges considered, prorated.",
-      "stepThresholdKwhPerDay": null
+      "source": "Finder + Energy Made Easy (both confirm)",
+      "sourceDate": "2026-07-19",
+      "notes": "Rates confirmed identical by EME plan page 2026-07-19 (Plan ID OVO704477MRE23) and Finder. Special offer 'Interest Rewards': OVO pays 3% interest on credit balances after monthly charges (prorated) - a perk, not a rate discount. Solar FiT +3c/kWh (not modelled). Optional 100% GreenPower. Fees: move-in/new connection $123.56 (site-visit, may vary), disconnection $123.56. EME est: Low $1,400 / Med $2,100 / High $2,810 (Finder: ~14% under reference). Meter: Basic ONLY. Payment: direct debit only. Effective 14 Jul 2026, no contract term.",
+      "stepThresholdKwhPerDay": null,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
     },
     {
       "id": "flipped-homegrid-anytime-eme",
@@ -865,6 +869,24 @@
       "sourceDate": "2026-07-18",
       "notes": "No lock-in contract. EME estimated cost $1,430/yr, no discount. 3 conditions apply per EME (not detailed in the screenshot - check these before switching, since this plan undercuts every other tracked plan on rate alone). Meter needed: all types.",
       "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "red-living-energy-saver-eme",
+      "retailer": "Red Energy",
+      "planName": "Living Energy Saver",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.9459,
+      "rateLow": 0.3251,
+      "rateHigh": 0.3251,
+      "discountPct": 0.0,
+      "source": "Energy Made Easy (plan page)",
+      "sourceDate": "2026-07-19",
+      "notes": "Solar FiT tiered +1.1 to +6.7c (SOLAR1 2.5c; SOLAR2 surplus first 6.85kWh/day 2.5c then 1.1c balance; Smart FiT 6.7c 4-9pm Mon-Sun; 2.5c other) - not modelled here. Optional 100% GreenPower +1.2c/kWh. EME est: Low $1,360 / Med $2,130 / High $2,910 (postcode-typical, no discounts). Fees: move-in/new connection $123.56 (business hours, may vary), disconnection $123.56; metering cost varies (contact Red 131 806). Meter: Basic/Smart. Plan ID RED552163MRE17, effective 01 Jul 2026, no contract term.",
+      "stepThresholdKwhPerDay": null,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 123.56
+      }
     }
   ]
 }
