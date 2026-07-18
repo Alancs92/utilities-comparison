@@ -197,7 +197,7 @@
 const PLANS_DATA = {
   "meta": {
     "generatedBy": "scripts_build_json.py",
-    "lastUpdated": "2026-07-18",
+    "lastUpdated": "2026-07-19",
     "schemaVersion": 1,
     "notes": [
       "tariffType 'block' = daily-usage-threshold stepped tariff (rateLow up to stepThresholdKwhPerDay, then rateHigh).",
@@ -215,7 +215,7 @@ const PLANS_DATA = {
     "avgDailyUsageKwh": 17.49,
     "billingCycleDays": 28,
     "currentPlanId": "globird-glosave",
-    "notes": "Baseline usage taken from GloBird invoice REDACTED (15-Jun-2026 to 12-Jul-2026), which states an average daily usage of 17.49 kWh. Household does NOT have a smart/interval meter, so Time of Use tariffs are not realistically accessible (most TOU plans require a smart meter) - block and single_rate plans are the ones that actually apply.",
+    "notes": "Baseline usage taken from GloBird invoice REDACTED (15-Jun-2026 to 12-Jul-2026), which states an average daily usage of 17.49 kWh. Household does NOT have a smart/interval meter, so Time of Use tariffs are not realistically accessible (most TOU plans require a smart meter) - block and single_rate plans are the ones that actually apply. Energy Made Easy's own calculation shows a 12-month average of 13.18 kWh/day, notably lower than the 17.49 kWh/day from the single (winter) GloBird billing cycle used as this tool's baseline - plausible, since winter usage is typically higher than an annual average (heating), but worth being aware the true annual-average baseline may be meaningfully lower than what this tool defaults to.",
     "hasSmartMeter": false,
     "meterType": "Basic (accumulation) meter"
   },
@@ -283,9 +283,9 @@ const PLANS_DATA = {
       "rateHigh": 0.2946,
       "stepThresholdKwhPerDay": null,
       "discountPct": 0,
-      "source": "Energy Made Easy screenshot",
-      "sourceDate": "2026-07-18",
-      "notes": "New-customer-of-Sumo eligibility condition applies. EME estimated cost ~$1,750/yr (exact figure cropped in screenshot), no discount.",
+      "source": "Energy Made Easy (plan page)",
+      "sourceDate": "2026-07-19",
+      "notes": "New-customer-of-Sumo eligibility (satisfactory credit check). EME page (2026-07-19, Plan ID SUM1140921MRE1): estimated cost $1,750/yr, no ongoing discount. Fees: 0.7% credit-card payment fee only; no connection/disconnection (move) fees. Basic meter, Ausgrid, effective 10 Jul 2026.",
       "requiresSmartMeter": false
     },
     {
@@ -298,11 +298,15 @@ const PLANS_DATA = {
       "rateLow": 0.3316,
       "rateHigh": 0.3316,
       "stepThresholdKwhPerDay": null,
-      "discountPct": 10,
-      "source": "Energy Made Easy screenshot",
-      "sourceDate": "2026-07-18",
-      "notes": "EME estimated cost ~$1,980 -> ~$1,780/yr (2 discounts, figures partially cropped in screenshot - treat discount % as approximate).",
-      "requiresSmartMeter": false
+      "discountPct": 0.0,
+      "source": "Energy Made Easy (plan page)",
+      "sourceDate": "2026-07-19",
+      "notes": "Savings are DOLLAR CREDITS, not an ongoing % discount (discountPct=0 per repo convention): $150/yr Loyalty Credit ($75 every 6 months, new+existing customers) + $50 one-off Refer-a-Friend (2nd bill, new customers only). Plan fees (Ausgrid network pass-through, relocation only): reconnection $123.56 (stored as connectionFee), disconnection $74.65, special meter-read/move $17.26. EME est. WITH credits: Low $1,220 / Med $2,000 / High $2,800 (postcode-typical, not this household). Meter: Basic/Smart. Plan ID NTR1109323MRE1, effective 01 Jul 2026.",
+      "requiresSmartMeter": false,
+      "fees": {
+        "connectionFee": 123.56,
+        "disconnectionFee": 74.65
+      }
     },
     {
       "id": "kogan-free-first-eme",
@@ -349,7 +353,7 @@ const PLANS_DATA = {
       "discountPct": 0,
       "source": "Energy Made Easy screenshot",
       "sourceDate": "2026-07-18",
-      "notes": "Likely requires a Seniors Card / new-to-AGL - confirm eligibility. No estimated cost visible in screenshot (cropped).",
+      "notes": "Likely requires a Seniors Card / new-to-AGL - confirm eligibility (2 conditions apply, per EME). Confirmed via official EME results page (2026-07-18): estimated cost $1,890/yr, no discount, 1 special offer noted (unspecified).",
       "requiresSmartMeter": false
     },
     {
@@ -1034,6 +1038,20 @@ const PLANS_DATA = {
       "source": "Finder.com.au comparison (postcode 2220, Ausgrid)",
       "sourceDate": "2026-07-18",
       "notes": "Finder: 14% less than reference price, est. $2,100/yr. Interest Rewards - OVO pays 3% interest on credit balances after monthly charges considered, prorated.",
+      "stepThresholdKwhPerDay": null
+    },
+    {
+      "id": "flipped-homegrid-anytime-eme",
+      "retailer": "Flipped Energy",
+      "planName": "HomeGrid Anytime",
+      "tariffType": "single_rate",
+      "dailyCharge": 0.77,
+      "rateLow": 0.2393,
+      "rateHigh": 0.2393,
+      "discountPct": 0.0,
+      "source": "Energy Made Easy official results page",
+      "sourceDate": "2026-07-18",
+      "notes": "No lock-in contract. EME estimated cost $1,430/yr, no discount. 3 conditions apply per EME (not detailed in the screenshot - check these before switching, since this plan undercuts every other tracked plan on rate alone). Meter needed: all types.",
       "stepThresholdKwhPerDay": null
     }
   ]
