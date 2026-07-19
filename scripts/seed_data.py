@@ -1,5 +1,5 @@
 # One-off seed script used to generate the initial data/plans.json from
-# GloBird invoice REDACTED, Energy Made Easy screenshots, and a Finder.com.au
+# GloBird invoice, Energy Made Easy screenshots, and a Finder.com.au
 # comparison (all captured 2026-07-18). Kept for provenance/reference only -
 # ongoing edits should go through cli/plans.py, not this file.
 
@@ -9,12 +9,11 @@ from datetime import date
 household = {
     "supplyAddress": "Hurstville NSW 2220",
     "distributor": "Ausgrid",
-    "nmi": "REDACTED",
     "postcode": "2220",
     "avgDailyUsageKwh": 17.49,
     "billingCycleDays": 28,
     "currentPlanId": "globird-glosave",
-    "notes": "Baseline usage taken from GloBird invoice REDACTED (15-Jun-2026 to 12-Jul-2026), which states an average daily usage of 17.49 kWh."
+    "notes": "Baseline usage taken from a GloBird winter bill (mid-2026), which states an average daily usage of 17.49 kWh."
 }
 
 plans = []
@@ -37,10 +36,10 @@ def add(id, retailer, planName, tariffType, dailyChargeCents, rateLowCents, rate
         "notes": notes
     })
 
-# --- Current plan (from GloBird invoice REDACTED) ---
+# --- Current plan (from GloBird invoice) ---
 add("globird-glosave", "GloBird Energy", "GLOSAVE", "block",
     95.7, 32.45, 36.3, stepThresholdKwhPerDay=15.0, discountPct=3,
-    source="GloBird invoice REDACTED", sourceDate="2026-07-13",
+    source="GloBird invoice", sourceDate="2026-07-13",
     notes="Current plan. Discount = 2% pay-on-time + 1% direct debit, conditional. Daily charge/usage rates shown are from 1-Jul-2026 (most recent).",
     isCurrent=True)
 

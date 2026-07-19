@@ -1,6 +1,6 @@
 # Power Plan Tracker
 
-A small self-contained tool for tracking electricity plan rates for one household (currently: Hurstville NSW 2220, Ausgrid network) and figuring out which plan is actually cheapest given real usage — not the generic annual estimate a comparison site shows.
+A small self-contained tool for tracking electricity plan rates for one household (on the Ausgrid network, NSW postcode 2220) and figuring out which plan is actually cheapest given real usage — not the generic annual estimate a comparison site shows.
 
 ## Why this exists
 

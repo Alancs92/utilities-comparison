@@ -210,12 +210,11 @@ const PLANS_DATA = {
   "household": {
     "supplyAddress": "Hurstville NSW 2220",
     "distributor": "Ausgrid",
-    "nmi": "REDACTED",
     "postcode": "2220",
     "avgDailyUsageKwh": 17.49,
     "billingCycleDays": 28,
     "currentPlanId": "globird-glosave",
-    "notes": "Baseline usage taken from GloBird invoice REDACTED (15-Jun-2026 to 12-Jul-2026), which states an average daily usage of 17.49 kWh. Household does NOT have a smart/interval meter, so Time of Use tariffs are not realistically accessible (most TOU plans require a smart meter) - block and single_rate plans are the ones that actually apply. Energy Made Easy's own calculation shows a 12-month average of 13.18 kWh/day, notably lower than the 17.49 kWh/day from the single (winter) GloBird billing cycle used as this tool's baseline - plausible, since winter usage is typically higher than an annual average (heating), but worth being aware the true annual-average baseline may be meaningfully lower than what this tool defaults to.",
+    "notes": "Baseline usage taken from a GloBird winter bill (mid-2026), which states an average daily usage of 17.49 kWh. Household does NOT have a smart/interval meter, so Time of Use tariffs are not realistically accessible (most TOU plans require a smart meter) - block and single_rate plans are the ones that actually apply. Energy Made Easy's own calculation shows a 12-month average of 13.18 kWh/day, notably lower than the 17.49 kWh/day from the single (winter) GloBird billing cycle used as this tool's baseline - plausible, since winter usage is typically higher than an annual average (heating), but worth being aware the true annual-average baseline may be meaningfully lower than what this tool defaults to.",
     "hasSmartMeter": false,
     "meterType": "Basic (accumulation) meter"
   },
@@ -231,7 +230,7 @@ const PLANS_DATA = {
       "rateHigh": 0.363,
       "stepThresholdKwhPerDay": 15.0,
       "discountPct": 3,
-      "source": "GloBird invoice REDACTED",
+      "source": "GloBird invoice",
       "sourceDate": "2026-07-13",
       "notes": "Current plan. Discount = 2% pay-on-time + 1% direct debit, conditional. Daily charge/usage rates shown are from 1-Jul-2026 (most recent).",
       "requiresSmartMeter": false
